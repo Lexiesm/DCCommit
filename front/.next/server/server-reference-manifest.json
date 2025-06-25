@@ -1,0 +1,110 @@
+{
+  "node": {
+    "7f11dcf59b26dfbd4525e19a017240bec0771e402b": {
+      "workers": {
+        "app/page": {
+          "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Flexi%2FWebAvanzada%2FTarea4%2Ftarea-4-2025-01-s2-frontend-div-inos%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%2C%5B%7B%22id%22%3A%227f11dcf59b26dfbd4525e19a017240bec0771e402b%22%2C%22exportedName%22%3A%22syncKeylessConfigAction%22%7D%2C%7B%22id%22%3A%227f123bdb2f3aaf97bf47012fa02408599c23e479c2%22%2C%22exportedName%22%3A%22createOrReadKeylessAction%22%7D%2C%7B%22id%22%3A%227fbcfac98585f31e0438f8687c8217dfbdcd209865%22%2C%22exportedName%22%3A%22deleteKeylessAction%22%7D%5D%5D%5D&__client_imported__=!",
+          "async": false
+        },
+        "app/moderator/page": {
+          "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Flexi%2FWebAvanzada%2FTarea4%2Ftarea-4-2025-01-s2-frontend-div-inos%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%2C%5B%7B%22id%22%3A%227f11dcf59b26dfbd4525e19a017240bec0771e402b%22%2C%22exportedName%22%3A%22syncKeylessConfigAction%22%7D%2C%7B%22id%22%3A%227f123bdb2f3aaf97bf47012fa02408599c23e479c2%22%2C%22exportedName%22%3A%22createOrReadKeylessAction%22%7D%2C%7B%22id%22%3A%227fbcfac98585f31e0438f8687c8217dfbdcd209865%22%2C%22exportedName%22%3A%22deleteKeylessAction%22%7D%5D%5D%5D&__client_imported__=!",
+          "async": false
+        },
+        "app/my-posts/page": {
+          "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Flexi%2FWebAvanzada%2FTarea4%2Ftarea-4-2025-01-s2-frontend-div-inos%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%2C%5B%7B%22id%22%3A%227f11dcf59b26dfbd4525e19a017240bec0771e402b%22%2C%22exportedName%22%3A%22syncKeylessConfigAction%22%7D%2C%7B%22id%22%3A%227f123bdb2f3aaf97bf47012fa02408599c23e479c2%22%2C%22exportedName%22%3A%22createOrReadKeylessAction%22%7D%2C%7B%22id%22%3A%227fbcfac98585f31e0438f8687c8217dfbdcd209865%22%2C%22exportedName%22%3A%22deleteKeylessAction%22%7D%5D%5D%5D&__client_imported__=!",
+          "async": false
+        },
+        "app/edit-profile/page": {
+          "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Flexi%2FWebAvanzada%2FTarea4%2Ftarea-4-2025-01-s2-frontend-div-inos%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%2C%5B%7B%22id%22%3A%227f11dcf59b26dfbd4525e19a017240bec0771e402b%22%2C%22exportedName%22%3A%22syncKeylessConfigAction%22%7D%2C%7B%22id%22%3A%227f123bdb2f3aaf97bf47012fa02408599c23e479c2%22%2C%22exportedName%22%3A%22createOrReadKeylessAction%22%7D%2C%7B%22id%22%3A%227fbcfac98585f31e0438f8687c8217dfbdcd209865%22%2C%22exportedName%22%3A%22deleteKeylessAction%22%7D%5D%5D%5D&__client_imported__=!",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/page": "rsc",
+        "app/moderator/page": "rsc",
+        "app/my-posts/page": "rsc",
+        "app/edit-profile/page": "rsc"
+      }
+    },
+    "7f123bdb2f3aaf97bf47012fa02408599c23e479c2": {
+      "workers": {
+        "app/page": {
+          "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Flexi%2FWebAvanzada%2FTarea4%2Ftarea-4-2025-01-s2-frontend-div-inos%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%2C%5B%7B%22id%22%3A%227f11dcf59b26dfbd4525e19a017240bec0771e402b%22%2C%22exportedName%22%3A%22syncKeylessConfigAction%22%7D%2C%7B%22id%22%3A%227f123bdb2f3aaf97bf47012fa02408599c23e479c2%22%2C%22exportedName%22%3A%22createOrReadKeylessAction%22%7D%2C%7B%22id%22%3A%227fbcfac98585f31e0438f8687c8217dfbdcd209865%22%2C%22exportedName%22%3A%22deleteKeylessAction%22%7D%5D%5D%5D&__client_imported__=!",
+          "async": false
+        },
+        "app/moderator/page": {
+          "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Flexi%2FWebAvanzada%2FTarea4%2Ftarea-4-2025-01-s2-frontend-div-inos%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%2C%5B%7B%22id%22%3A%227f11dcf59b26dfbd4525e19a017240bec0771e402b%22%2C%22exportedName%22%3A%22syncKeylessConfigAction%22%7D%2C%7B%22id%22%3A%227f123bdb2f3aaf97bf47012fa02408599c23e479c2%22%2C%22exportedName%22%3A%22createOrReadKeylessAction%22%7D%2C%7B%22id%22%3A%227fbcfac98585f31e0438f8687c8217dfbdcd209865%22%2C%22exportedName%22%3A%22deleteKeylessAction%22%7D%5D%5D%5D&__client_imported__=!",
+          "async": false
+        },
+        "app/my-posts/page": {
+          "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Flexi%2FWebAvanzada%2FTarea4%2Ftarea-4-2025-01-s2-frontend-div-inos%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%2C%5B%7B%22id%22%3A%227f11dcf59b26dfbd4525e19a017240bec0771e402b%22%2C%22exportedName%22%3A%22syncKeylessConfigAction%22%7D%2C%7B%22id%22%3A%227f123bdb2f3aaf97bf47012fa02408599c23e479c2%22%2C%22exportedName%22%3A%22createOrReadKeylessAction%22%7D%2C%7B%22id%22%3A%227fbcfac98585f31e0438f8687c8217dfbdcd209865%22%2C%22exportedName%22%3A%22deleteKeylessAction%22%7D%5D%5D%5D&__client_imported__=!",
+          "async": false
+        },
+        "app/edit-profile/page": {
+          "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Flexi%2FWebAvanzada%2FTarea4%2Ftarea-4-2025-01-s2-frontend-div-inos%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%2C%5B%7B%22id%22%3A%227f11dcf59b26dfbd4525e19a017240bec0771e402b%22%2C%22exportedName%22%3A%22syncKeylessConfigAction%22%7D%2C%7B%22id%22%3A%227f123bdb2f3aaf97bf47012fa02408599c23e479c2%22%2C%22exportedName%22%3A%22createOrReadKeylessAction%22%7D%2C%7B%22id%22%3A%227fbcfac98585f31e0438f8687c8217dfbdcd209865%22%2C%22exportedName%22%3A%22deleteKeylessAction%22%7D%5D%5D%5D&__client_imported__=!",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/page": "rsc",
+        "app/moderator/page": "rsc",
+        "app/my-posts/page": "rsc",
+        "app/edit-profile/page": "rsc"
+      }
+    },
+    "7fbcfac98585f31e0438f8687c8217dfbdcd209865": {
+      "workers": {
+        "app/page": {
+          "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Flexi%2FWebAvanzada%2FTarea4%2Ftarea-4-2025-01-s2-frontend-div-inos%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%2C%5B%7B%22id%22%3A%227f11dcf59b26dfbd4525e19a017240bec0771e402b%22%2C%22exportedName%22%3A%22syncKeylessConfigAction%22%7D%2C%7B%22id%22%3A%227f123bdb2f3aaf97bf47012fa02408599c23e479c2%22%2C%22exportedName%22%3A%22createOrReadKeylessAction%22%7D%2C%7B%22id%22%3A%227fbcfac98585f31e0438f8687c8217dfbdcd209865%22%2C%22exportedName%22%3A%22deleteKeylessAction%22%7D%5D%5D%5D&__client_imported__=!",
+          "async": false
+        },
+        "app/moderator/page": {
+          "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Flexi%2FWebAvanzada%2FTarea4%2Ftarea-4-2025-01-s2-frontend-div-inos%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%2C%5B%7B%22id%22%3A%227f11dcf59b26dfbd4525e19a017240bec0771e402b%22%2C%22exportedName%22%3A%22syncKeylessConfigAction%22%7D%2C%7B%22id%22%3A%227f123bdb2f3aaf97bf47012fa02408599c23e479c2%22%2C%22exportedName%22%3A%22createOrReadKeylessAction%22%7D%2C%7B%22id%22%3A%227fbcfac98585f31e0438f8687c8217dfbdcd209865%22%2C%22exportedName%22%3A%22deleteKeylessAction%22%7D%5D%5D%5D&__client_imported__=!",
+          "async": false
+        },
+        "app/my-posts/page": {
+          "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Flexi%2FWebAvanzada%2FTarea4%2Ftarea-4-2025-01-s2-frontend-div-inos%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%2C%5B%7B%22id%22%3A%227f11dcf59b26dfbd4525e19a017240bec0771e402b%22%2C%22exportedName%22%3A%22syncKeylessConfigAction%22%7D%2C%7B%22id%22%3A%227f123bdb2f3aaf97bf47012fa02408599c23e479c2%22%2C%22exportedName%22%3A%22createOrReadKeylessAction%22%7D%2C%7B%22id%22%3A%227fbcfac98585f31e0438f8687c8217dfbdcd209865%22%2C%22exportedName%22%3A%22deleteKeylessAction%22%7D%5D%5D%5D&__client_imported__=!",
+          "async": false
+        },
+        "app/edit-profile/page": {
+          "moduleId": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Flexi%2FWebAvanzada%2FTarea4%2Ftarea-4-2025-01-s2-frontend-div-inos%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fkeyless-actions.js%22%2C%5B%7B%22id%22%3A%227f11dcf59b26dfbd4525e19a017240bec0771e402b%22%2C%22exportedName%22%3A%22syncKeylessConfigAction%22%7D%2C%7B%22id%22%3A%227f123bdb2f3aaf97bf47012fa02408599c23e479c2%22%2C%22exportedName%22%3A%22createOrReadKeylessAction%22%7D%2C%7B%22id%22%3A%227fbcfac98585f31e0438f8687c8217dfbdcd209865%22%2C%22exportedName%22%3A%22deleteKeylessAction%22%7D%5D%5D%5D&__client_imported__=!",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/page": "rsc",
+        "app/moderator/page": "rsc",
+        "app/my-posts/page": "rsc",
+        "app/edit-profile/page": "rsc"
+      }
+    },
+    "7fa10137b9ea7a9f2518bf70267831635328ce32e2": {
+      "workers": {
+        "app/page": {
+          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Flexi%2FWebAvanzada%2FTarea4%2Ftarea-4-2025-01-s2-frontend-div-inos%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fserver-actions.js%22%2C%5B%7B%22id%22%3A%227fa10137b9ea7a9f2518bf70267831635328ce32e2%22%2C%22exportedName%22%3A%22invalidateCacheAction%22%7D%5D%5D%5D&__client_imported__=true!",
+          "async": false
+        },
+        "app/moderator/page": {
+          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Flexi%2FWebAvanzada%2FTarea4%2Ftarea-4-2025-01-s2-frontend-div-inos%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fserver-actions.js%22%2C%5B%7B%22id%22%3A%227fa10137b9ea7a9f2518bf70267831635328ce32e2%22%2C%22exportedName%22%3A%22invalidateCacheAction%22%7D%5D%5D%5D&__client_imported__=true!",
+          "async": false
+        },
+        "app/my-posts/page": {
+          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Flexi%2FWebAvanzada%2FTarea4%2Ftarea-4-2025-01-s2-frontend-div-inos%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fserver-actions.js%22%2C%5B%7B%22id%22%3A%227fa10137b9ea7a9f2518bf70267831635328ce32e2%22%2C%22exportedName%22%3A%22invalidateCacheAction%22%7D%5D%5D%5D&__client_imported__=true!",
+          "async": false
+        },
+        "app/edit-profile/page": {
+          "moduleId": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2Fhome%2Flexi%2FWebAvanzada%2FTarea4%2Ftarea-4-2025-01-s2-frontend-div-inos%2Fnode_modules%2F%40clerk%2Fnextjs%2Fdist%2Fesm%2Fapp-router%2Fserver-actions.js%22%2C%5B%7B%22id%22%3A%227fa10137b9ea7a9f2518bf70267831635328ce32e2%22%2C%22exportedName%22%3A%22invalidateCacheAction%22%7D%5D%5D%5D&__client_imported__=true!",
+          "async": false
+        }
+      },
+      "layer": {
+        "app/page": "action-browser",
+        "app/moderator/page": "action-browser",
+        "app/my-posts/page": "action-browser",
+        "app/edit-profile/page": "action-browser"
+      }
+    }
+  },
+  "edge": {},
+  "encryptionKey": "On4qoC5kqEkVi7ZbEftzV2ZXBsx5jgSNsrwST8GSEJU="
+}

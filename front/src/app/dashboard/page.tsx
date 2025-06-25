@@ -1,0 +1,764 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useUser, useAuth } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
+import { FiTrash, FiSearch, FiX, FiCheckCircle } from 'react-icons/fi';
+import { getAllUsers, updateUserRole } from '@/services/users';
+import { getAllPosts, deletePost, updatePostStatus } from '@/services/posts';
+import Loading from '@/components/Loading';
+import Notification from '@/components/Notification';
+
+const baseUrl = process.env.NEXT_PUBLIC_URL_BACK
+
+// Interfaces para tipar los datos
+interface User {
+  id: number;
+  name: string;
+  nickname?: string;
+  email: string;
+  profile_picture?: string;
+  clerkId: string;
+  rol: 'USER' | 'MODERATOR' | 'ADMIN';
+  createdAt: string;
+}
+
+interface Post {
+  id: number;
+  title: string;
+  content: string;
+  date: string;
+  status: 'pending' | 'approved' | 'rejected';
+  likes: number;
+  userId: string;
+  user?: {
+    name: string;
+    nickname?: string;
+    profile_picture?: string;
+    clerkId: string;
+  };
+}
+
+export default function Dashboard() {
+  // Estado para la vista activa
+  const [view, setView] = useState<'users' | 'posts' | 'pendingPosts'>('users');
+  
+  // Estado para los datos
+  const [users, setUsers] = useState<User[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  // Estados para UI
+  const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [notification, setNotification] = useState<{
+    type: 'success' | 'error' | 'warning' | 'info';
+    message: string;
+  } | null>(null);
+  
+  // Auth y routing
+  const { user: clerkUser, isLoaded, isSignedIn } = useUser();
+  const { getToken } = useAuth();
+  const router = useRouter();
+  
+  // Determinar si el usuario es admin
+  const [isAdmin, setIsAdmin] = useState(false);
+  
+  // Cargar datos iniciales
+  useEffect(() => {
+    const loadData = async () => {
+      if (!isLoaded) return;
+      
+      // Verificar si usuario está logueado
+      if (!isSignedIn) {
+        router.push('/unauthorized');
+        return;
+      }
+      
+      try {
+        setLoading(true);
+        const token = await getToken({ template: 'access_token' });
+        
+        // Verificar si el usuario es administrador (simulado por ahora)
+        // En un caso real, esto vendría del token o de la API
+        setIsAdmin(true);
+        
+        // Cargar usuarios y posts
+        const fetchedUsers = await fetch(`${baseUrl}/users`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+        });
+
+        const usersData = await fetchedUsers.json();
+
+        const fetchedPosts = await fetch(`${baseUrl}/posts`, {
+              method: 'GET',
+              credentials: 'include',
+              headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` },
+            })
+        
+        const postsData = await fetchedPosts.json();
+        
+        setUsers(usersData);
+        setPosts(postsData);
+        // setFilteredPosts(fetchedPosts);
+        
+      } catch (error) {
+        console.error('Error cargando datos:', error);
+        setNotification({
+          type: 'error',
+          message: 'Error al cargar los datos'
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    loadData();
+  }, [isLoaded, isSignedIn, router, getToken]);
+  
+  // Filtrar posts según la vista seleccionada
+  useEffect(() => {
+    if (view === 'pendingPosts') {
+      setFilteredPosts(posts.filter(post => post.status === 'pending'));
+    } else {
+      setFilteredPosts(posts);
+    }
+  }, [view, posts]);
+  
+  // Filtrar por búsqueda
+  useEffect(() => {
+    // Primero manejamos los filtros especiales por estado
+    if (searchQuery.startsWith('status:')) {
+      const status = searchQuery.split(':')[1] as 'pending' | 'approved' | 'rejected';
+      setFilteredPosts(posts.filter(post => post.status === status));
+      return;
+    }
+    
+    // Luego manejamos la búsqueda normal o sin búsqueda
+    if (!searchQuery.trim()) {
+      if (view === 'pendingPosts') {
+        setFilteredPosts(posts.filter(post => post.status === 'pending'));
+      } else if (view === 'posts') {
+        setFilteredPosts(posts);
+      }
+      return;
+    }
+    
+    const lowerQuery = searchQuery.toLowerCase();
+    
+    if (view === 'users') {
+      // La búsqueda de usuarios se maneja en el renderizado
+    } else {
+      // Filtrar posts por título o contenido
+      const filtered = posts.filter(post => {
+        const matchesQuery = post.title.toLowerCase().includes(lowerQuery) || 
+                            post.content.toLowerCase().includes(lowerQuery);
+        
+        // Si estamos en pendingPosts, solo mostrar los pendientes
+        return view === 'pendingPosts' 
+          ? matchesQuery && post.status === 'pending'
+          : matchesQuery;
+      });
+      
+      setFilteredPosts(filtered);
+    }
+  }, [searchQuery, view, posts]);
+  
+  // Asignar rol a un usuario
+  const handleSetRole = async (userId: string, role: 'ADMIN' | 'MODERATOR') => {
+    if (!isAdmin) return;
+    
+    try {
+      setActionLoading(true);
+      const token = await getToken({ template: 'access_token' });
+      await updateUserRole(userId, role, token || '');
+      
+      // Actualizar lista de usuarios
+      setUsers(prevUsers => 
+        prevUsers.map(user => 
+          user.clerkId === userId ? { ...user, role } : user
+        )
+      );
+      
+      setNotification({
+        type: 'success',
+        message: `Usuario actualizado como ${role.toLowerCase()}`
+      });
+    } catch (error) {
+      console.error('Error asignando rol:', error);
+      setNotification({
+        type: 'error',
+        message: 'Error al asignar rol'
+      });
+    } finally {
+      setActionLoading(false);
+    }
+  };
+  
+  // Quitar rol a un usuario
+  const handleRemoveRole = async (userId: string) => {
+    if (!isAdmin) return;
+    
+    try {
+      setActionLoading(true);
+      const token = await getToken({ template: 'access_token' });
+      await updateUserRole(userId, 'USER', token || '');
+      
+      // Actualizar lista de usuarios
+      setUsers(prevUsers => 
+        prevUsers.map(user => 
+          user.clerkId === userId ? { ...user, role: 'USER' } : user
+        )
+      );
+      
+      setNotification({
+        type: 'info',
+        message: 'Rol removido correctamente'
+      });
+    } catch (error) {
+      console.error('Error removiendo rol:', error);
+      setNotification({
+        type: 'error',
+        message: 'Error al quitar rol'
+      });
+    } finally {
+      setActionLoading(false);
+    }
+  };
+  
+  // Eliminar un post
+  const handleDeletePost = async (postId: number) => {
+    if (!isAdmin) return;
+    
+    if (!confirm('¿Estás seguro de que deseas eliminar este post?')) {
+      return;
+    }
+    
+    try {
+      setActionLoading(true);
+      const token = await getToken({ template: 'access_token' });
+      await deletePost(postId, token || '');
+      
+      // Eliminar post de la lista
+      setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
+      
+      setNotification({
+        type: 'success',
+        message: 'Post eliminado correctamente'
+      });
+    } catch (error) {
+      console.error('Error eliminando post:', error);
+      setNotification({
+        type: 'error',
+        message: 'Error al eliminar el post'
+      });
+    } finally {
+      setActionLoading(false);
+    }
+  };
+  
+  // Aprobar un post
+  const handleApprovePost = async (postId: number) => {
+    try {
+      setActionLoading(true);
+      const token = await getToken({ template: 'access_token' });
+      await updatePostStatus(postId, 'approved', token || '');
+      
+      // Actualizar el estado local
+      setPosts(prevPosts => 
+        prevPosts.map(post => 
+          post.id === postId ? {...post, status: 'approved'} : post
+        )
+      );
+      
+      setNotification({
+        type: 'success',
+        message: 'Post aprobado correctamente'
+      });
+    } catch (error) {
+      console.error('Error aprobando post:', error);
+      setNotification({
+        type: 'error',
+        message: 'Error al aprobar el post'
+      });
+    } finally {
+      setActionLoading(false);
+    }
+  };
+  
+  // Rechazar un post
+  const handleRejectPost = async (postId: number) => {
+    try {
+      setActionLoading(true);
+      const token = await getToken({ template: 'access_token' });
+      await updatePostStatus(postId, 'rejected', token || '');
+      
+      // Actualizar el estado local
+      setPosts(prevPosts => 
+        prevPosts.map(post => 
+          post.id === postId ? {...post, status: 'rejected'} : post
+        )
+      );
+      
+      setNotification({
+        type: 'warning',
+        message: 'Post rechazado'
+      });
+    } catch (error) {
+      console.error('Error rechazando post:', error);
+      setNotification({
+        type: 'error',
+        message: 'Error al rechazar el post'
+      });
+    } finally {
+      setActionLoading(false);
+    }
+  };
+  
+  // Filtrar usuarios por búsqueda
+  const filteredUsers = searchQuery
+    ? users.filter(user => 
+        user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (user.nickname && user.nickname.toLowerCase().includes(searchQuery.toLowerCase()))
+      )
+    : users;
+    
+  // Contar posts por estado para el menú
+  const pendingPostsCount = posts.filter(post => post.status === 'pending').length;
+  
+  if (loading) {
+    return <Loading />;
+  }
+  
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="bg-gray-800 p-8 rounded-lg max-w-md text-center">
+          <h1 className="text-2xl font-bold text-red-400 mb-4">Acceso Denegado</h1>
+          <p className="text-gray-300 mb-6">No tienes permisos de administrador para acceder a esta página.</p>
+          <button 
+            onClick={() => router.push('/')}
+            className="bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded"
+          >
+            Volver al inicio
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-black text-white">
+      {notification && (
+        <Notification
+          type={notification.type}
+          message={notification.message}
+          onClose={() => setNotification(null)}
+        />
+      )}
+      
+      {actionLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
+          <div className="bg-gray-800 rounded-lg p-6 flex items-center gap-4">
+            <div className="w-10 h-10 border-4 border-t-violet-600 border-r-violet-600 border-b-gray-700 border-l-gray-700 rounded-full animate-spin"></div>
+            <p className="text-gray-300">Procesando acción...</p>
+          </div>
+        </div>
+      )}
+      
+      <div className="max-w-6xl mx-auto p-6 flex flex-col md:flex-row gap-6">
+        {/* Columna izquierda: menú */}
+        <div className="w-full md:w-64 flex-shrink-0">
+          <div className="bg-gray-800 p-4 rounded-lg shadow-md flex flex-col gap-4">
+            <div className="text-xl font-bold text-center mb-2 text-violet-300 border-b border-gray-700 pb-2">
+              Panel de Admin
+            </div>
+            <button
+              className={`flex justify-between items-center px-4 py-2 rounded-lg text-left font-semibold transition-colors ${
+                view === 'users' ? 'bg-violet-700' : 'hover:bg-gray-700'
+              }`}
+              onClick={() => setView('users')}
+            >
+              <span>Usuarios</span>
+              <span className="bg-gray-900 px-2 py-0.5 rounded text-xs">
+                {users.length}
+              </span>
+            </button>
+            <button
+              className={`flex justify-between items-center px-4 py-2 rounded-lg text-left font-semibold transition-colors ${
+                view === 'posts' ? 'bg-violet-700' : 'hover:bg-gray-700'
+              }`}
+              onClick={() => setView('posts')}
+            >
+              <span>Posts</span>
+              <span className="bg-gray-900 px-2 py-0.5 rounded text-xs">
+                {posts.length}
+              </span>
+            </button>
+            <button
+              className={`flex justify-between items-center px-4 py-2 rounded-lg text-left font-semibold transition-colors ${
+                view === 'pendingPosts' ? 'bg-violet-700' : 'hover:bg-gray-700'
+              }`}
+              onClick={() => setView('pendingPosts')}
+            >
+              <span>Posts Pendientes</span>
+              <span className="bg-gray-900 px-2 py-0.5 rounded text-xs">
+                {pendingPostsCount}
+              </span>
+            </button>
+          </div>
+        </div>
+        
+        {/* Columna derecha: contenido dinámico */}
+        <div className="flex-1 flex flex-col gap-6">
+          {/* Barra de búsqueda */}
+          <div className="w-full bg-gray-800 rounded-lg p-3 flex items-center">
+            <div className="relative flex-1">
+              <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder={`Buscar ${view === 'users' ? 'usuarios' : 'posts'}...`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 pl-10 pr-10 text-white placeholder-gray-400 focus:outline-none focus:border-violet-500"
+              />
+              {searchQuery && (
+                <button 
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                >
+                  <FiX size={16} />
+                </button>
+              )}
+            </div>
+          </div>
+          
+          {/* Título de la sección */}
+          <div className="flex justify-between items-center">
+            <h1 className="text-3xl font-bold">
+              {view === 'users' ? 'Gestión de Usuarios' : 
+               view === 'posts' ? 'Todos los Posts' : 'Posts Pendientes'}
+            </h1>
+            
+            {view === 'posts' && (
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className={`px-3 py-1 text-xs rounded-full ${!searchQuery ? 'bg-violet-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}
+                >
+                  Todos
+                </button>
+                <button
+                  onClick={() => setSearchQuery('status:approved')}
+                  className={`px-3 py-1 text-xs rounded-full ${searchQuery === 'status:approved' ? 'bg-green-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}
+                >
+                  Aprobados
+                </button>
+                <button
+                  onClick={() => setSearchQuery('status:pending')}
+                  className={`px-3 py-1 text-xs rounded-full ${searchQuery === 'status:pending' ? 'bg-yellow-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}
+                >
+                  Pendientes
+                </button>
+                <button
+                  onClick={() => setSearchQuery('status:rejected')}
+                  className={`px-3 py-1 text-xs rounded-full ${searchQuery === 'status:rejected' ? 'bg-red-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}
+                >
+                  Rechazados
+                </button>
+              </div>
+            )}
+          </div>
+          
+          {/* Contenido según la vista seleccionada */}
+          {view === 'users' && (
+            <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+              <h2 className="text-xl font-bold mb-4 text-violet-300">Lista de Usuarios</h2>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead className="bg-gray-900 text-gray-300">
+                    <tr>
+                      <th className="p-3 rounded-tl-lg">Usuario</th>
+                      <th className="p-3">Email</th>
+                      <th className="p-3">Rol</th>
+                      <th className="p-3 rounded-tr-lg">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-700">
+                    {filteredUsers.length > 0 ? (
+                      filteredUsers.map((user) => (
+                        <tr key={user.clerkId} className="hover:bg-gray-750">
+                          <td className="p-3">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-700">
+                                {user.profile_picture ? (
+                                  <img 
+                                    src={user.profile_picture} 
+                                    alt={`${user.name}'s profile`}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center text-gray-400 font-bold">
+                                    {user.name.charAt(0)}
+                                  </div>
+                                )}
+                              </div>
+                              <div>
+                                <p className="font-semibold">{user.name}</p>
+                                {user.nickname && (
+                                  <p className="text-xs text-gray-400">@{user.nickname}</p>
+                                )}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="p-3 text-gray-300">{user.email}</td>
+                          <td className="p-3">
+                            <span className={`px-2 py-1 rounded text-xs font-bold ${
+                                    user.rol === 'ADMIN' ? 'bg-red-900/40 text-red-300' :
+                                    user.rol === 'MODERATOR' ? 'bg-yellow-900/40 text-yellow-300' :
+                                    user.rol === 'USER' ? 'bg-gray-900/40 text-gray-300' :
+                                    'bg-gray-700 text-white' 
+                                    }`}>
+                                    {user.rol === 'ADMIN' ? 'Administrador' :
+                                    user.rol === 'MODERATOR' ? 'Moderador' :
+                                    user.rol === 'USER' ? 'Usuario' :
+                                    'Desconocido'}
+                            </span>
+                          </td>
+                          <td className="p-3">
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => handleSetRole(user.clerkId, 'ADMIN')}
+                                disabled={user.rol === 'ADMIN' || actionLoading}
+                                className={`text-xs px-2 py-1 rounded ${
+                                  user.rol === 'ADMIN' 
+                                    ? 'bg-gray-700 text-gray-500 cursor-not-allowed' 
+                                    : 'bg-red-700 hover:bg-red-600 text-white'
+                                }`}
+                              >
+                                Admin
+                              </button>
+                              <button
+                                onClick={() => handleSetRole(user.clerkId, 'MODERATOR')}
+                                disabled={user.rol === 'MODERATOR' || actionLoading}
+                                className={`text-xs px-2 py-1 rounded ${
+                                  user.rol === 'MODERATOR' 
+                                    ? 'bg-gray-700 text-gray-500 cursor-not-allowed' 
+                                    : 'bg-yellow-700 hover:bg-yellow-600 text-white'
+                                }`}
+                              >
+                                Mod
+                              </button>
+                              {(user.rol === 'ADMIN' || user.rol === 'MODERATOR') && (
+                                <button
+                                  onClick={() => handleRemoveRole(user.clerkId)}
+                                  disabled={actionLoading}
+                                  className="bg-gray-700 hover:bg-gray-600 text-white text-xs px-2 py-1 rounded"
+                                >
+                                  Quitar Rol
+                                </button>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={4} className="p-6 text-center text-gray-400">
+                          No se encontraron usuarios
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+          
+          {view === 'posts' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {filteredPosts.length > 0 ? (
+                filteredPosts.map(post => (
+                  <div
+                    key={post.id}
+                    className="bg-gray-800 text-white p-6 rounded-lg shadow-md border border-gray-700 relative"
+                  >
+                    {/* Indicador de estado */}
+                    <div className="absolute top-3 right-3">
+                      <span className={`text-xs px-2 py-1 rounded ${
+                        post.status === 'approved' ? 'bg-green-900/40 text-green-300 border border-green-700/30' :
+                        post.status === 'rejected' ? 'bg-red-900/40 text-red-300 border border-red-700/30' :
+                        'bg-yellow-900/40 text-yellow-300 border border-yellow-700/30'
+                      }`}>
+                        {post.status === 'approved' ? 'Aprobado' :
+                         post.status === 'rejected' ? 'Rechazado' : 'Pendiente'}
+                      </span>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 rounded-full overflow-hidden border border-blue-400">
+                        {post.user?.profile_picture ? (
+                          <img
+                            src={post.user.profile_picture}
+                            alt="Foto de perfil"
+                            className="object-cover w-full h-full"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-400 font-bold bg-gray-700">
+                            {post.user?.name?.charAt(0) || 'U'}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-semibold leading-5">{post.user?.name || 'Usuario'}</p>
+                        <p className="text-xs text-gray-400 leading-4">
+                          {new Date(post.date).toLocaleDateString('es-ES', { 
+                            day: 'numeric', 
+                            month: 'short',
+                            year: 'numeric'
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <h1 className="text-lg font-bold mb-3">{post.title}</h1>
+                    
+                    <p className="text-sm text-gray-300 mb-4 line-clamp-3">
+                      {post.content.replace(/[#*`]/g, '')}
+                    </p>
+                    
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-400">❤️‍🔥 {post.likes} likes</span>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => router.push(`/post/${post.id}`)}
+                          className="bg-violet-600 hover:bg-violet-700 text-white text-xs px-3 py-1 rounded"
+                        >
+                          Ver
+                        </button>
+                        {post.status === 'pending' && (
+                          <>
+                            <button
+                              onClick={() => handleApprovePost(post.id)}
+                              className="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1 rounded"
+                            >
+                              Aprobar
+                            </button>
+                            <button
+                              onClick={() => handleRejectPost(post.id)}
+                              className="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 rounded"
+                            >
+                              Rechazar
+                            </button>
+                          </>
+                        )}
+                        {post.status === 'rejected' && (
+                          <button
+                            onClick={() => handleApprovePost(post.id)}
+                            className="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1 rounded"
+                          >
+                            Aprobar
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleDeletePost(post.id)}
+                          className="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1 rounded flex items-center gap-1"
+                        >
+                          <FiTrash size={12} />
+                          <span>Eliminar</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-2 bg-gray-800 p-8 rounded-lg text-center">
+                  <p className="text-gray-400">No se encontraron posts</p>
+                </div>
+              )}
+            </div>
+          )}
+          
+          {view === 'pendingPosts' && (
+            <div className="flex flex-col gap-4">
+              {filteredPosts.length > 0 ? (
+                filteredPosts.map(post => (
+                  <div
+                    key={post.id}
+                    className="bg-gray-800 text-white p-6 rounded-lg shadow-md border border-yellow-700/30"
+                  >
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 rounded-full overflow-hidden border border-blue-400">
+                        {post.user?.profile_picture ? (
+                          <img
+                            src={post.user.profile_picture}
+                            alt="Foto de perfil"
+                            className="object-cover w-full h-full"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-400 font-bold bg-gray-700">
+                            {post.user?.name?.charAt(0) || 'U'}
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-semibold leading-5">{post.user?.name || 'Usuario'}</p>
+                        <p className="text-xs text-gray-400 leading-4">
+                          {new Date(post.date).toLocaleDateString('es-ES', { 
+                            day: 'numeric', 
+                            month: 'short'
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <h1 className="text-lg font-bold mb-3">{post.title}</h1>
+                    <p className="text-sm text-gray-300 mb-4">{post.content.replace(/[#*`]/g, '')}</p>
+                    
+                    <div className="border-t border-gray-700 pt-4 mt-2">
+                      <div className="flex justify-between items-center">
+                        <div className="text-sm text-yellow-400 flex items-center">
+                          <span className="bg-yellow-500/20 p-1 rounded-full mr-2">
+                            <FiCheckCircle size={14} />
+                          </span>
+                          Pendiente de moderación
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleApprovePost(post.id)}
+                            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm"
+                          >
+                            Aprobar
+                          </button>
+                          <button
+                            onClick={() => handleRejectPost(post.id)}
+                            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded text-sm"
+                          >
+                            Rechazar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="bg-gray-800 p-8 rounded-lg text-center">
+                  <p className="text-gray-400">No hay posts pendientes de moderación</p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,1 @@
+self.__NEXT_FONT_MANIFEST="{\"pages\":{},\"app\":{\"/home/lexi/WebAvanzada/Tarea4/tarea-4-2025-01-s2-frontend-div-inos/src/app/layout\":[\"static/media/86a4519c88efbac0-s.p.woff2\",\"static/media/4f05ba3a6752a328-s.p.woff2\",\"static/media/c7f848bed9dd25a3-s.p.woff2\",\"static/media/443896d591e4f761-s.p.woff2\"]},\"appUsingSizeAdjust\":true,\"pagesUsingSizeAdjust\":false}"

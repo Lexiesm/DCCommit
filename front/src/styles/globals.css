@@ -1,0 +1,63 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-gray-custom: #171717;
+  
+}
+
+/* Modo claro */
+:root {
+  --background-color: #ffffff;
+  --text-color: #000000;
+
+  --input-bg: #f3f4f6;
+  --input-text: #333;
+  --imput-border: #a4a4a4;
+  --imput-focus: #14a8e7;
+
+  --submit-button-bg: #347D39;
+  --submit-button-text: white;
+
+  --code-bg: #c6c6c6;
+  --code-text: #1e1e1e;
+}
+
+/* Modo oscuro */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #000000;
+    --text-color: #ffffff;
+
+    --input-bg: #333;
+    --input-text: #fff;
+    --input-border: #333;
+    --input-focus: #38bdf8;
+
+    --code-bg: #2e3a4f;
+    --code-text: #f3f4f6;
+  }
+}
+
+/* Estilos globales */
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: sans-serif;
+}
+
+/* Estilo general para inputs y textareas */
+input,
+textarea {
+  border-color: var(--imput-border);
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--imput-focus); 
+  box-shadow: var(--imput-border); 
+}
+

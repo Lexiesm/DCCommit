@@ -1,0 +1,6 @@
+{
+  "/page": "app/page.js",
+  "/moderator/page": "app/moderator/page.js",
+  "/my-posts/page": "app/my-posts/page.js",
+  "/edit-profile/page": "app/edit-profile/page.js"
+}
